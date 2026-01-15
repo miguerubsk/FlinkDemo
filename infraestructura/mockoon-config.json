@@ -1,0 +1,21 @@
+{
+  "uuid": "demo-flink-api",
+  "lastMigration": 32,
+  "name": "API Seguros",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3000,
+  "routes": [
+    {
+      "method": "post",
+      "endpoint": "api/validar",
+      "responses": [
+        {
+          "statusCode": 200,
+          "body": "{\"status\": \"validado\", \"score\": 0.85}",
+          "headers": [{ "key": "Content-Type", "value": "application/json" }]
+        }
+      ]
+    }
+  ]
+}

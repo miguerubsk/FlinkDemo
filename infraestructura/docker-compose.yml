@@ -1,0 +1,67 @@
+services:
+  # 1. PostgreSQL con configuración para CDC
+  postgres:
+    image: debezium/postgres:15
+    container_name: postgres_cdc
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-flink_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-flink_password}
+      - POSTGRES_DB=${POSTGRES_DB:-mi_base_datos}
+    volumes:
+      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+    command: ["postgres", "-c", "wal_level=logical"]
+    networks:
+      - flink-network
+
+  # 2. Mockoon CLI (Para la API Fake)
+  mockoon:
+    image: mockoon/cli:latest
+    container_name: mockoon_api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./mockoon-config.json:/data/config.json
+    command: ["--data", "/data/config.json", "--port", "3000"]
+    networks:
+      - flink-network
+
+  # 3. Flink JobManager (Panel de control: http://localhost:8081)
+  jobmanager:
+    image: flink:1.17
+    container_name: flink_jobmanager
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DB=${MONGO_DB}
+      - MONGO_COLLECTION=${MONGO_COLLECTION}
+    networks:
+      - flink-network
+
+  # 4. Flink TaskManager (El que ejecuta el trabajo)
+  taskmanager:
+    image: flink:1.17
+    container_name: flink_taskmanager
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 200
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DB=${MONGO_DB}
+      - MONGO_COLLECTION=${MONGO_COLLECTION}
+    networks:
+      - flink-network
+
+networks:
+  flink-network:
+    driver: bridge
