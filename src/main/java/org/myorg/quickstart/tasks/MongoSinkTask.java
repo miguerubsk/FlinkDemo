@@ -23,10 +23,10 @@ public class MongoSinkTask {
         MongoSink<String> sink = MongoSink.<String>builder().setUri(MONGO_URI).setDatabase(MONGO_DB)
                 .setCollection(MONGO_COLLECTION).setSerializationSchema((String input, MongoSinkContext context) -> {
                     BsonDocument doc = BsonDocument.parse(input);
-                    // Upsert basado en "id_siniestro"
-                    if (doc.containsKey("id_siniestro")) {
-                        int idSiniestro = doc.getInt32("id_siniestro").getValue();
-                        return new ReplaceOneModel<>(Filters.eq("id_siniestro", idSiniestro), doc,
+                    // Upsert basado en "siniestro_id"
+                    if (doc.containsKey("siniestro_id")) {
+                        int idSiniestro = doc.getInt32("siniestro_id").getValue();
+                        return new ReplaceOneModel<>(Filters.eq("siniestro_id", idSiniestro), doc,
                                 new ReplaceOptions().upsert(true));
                     } else {
                         // Fallback por si acaso no tiene id_siniestro
