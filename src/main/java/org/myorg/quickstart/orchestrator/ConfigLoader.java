@@ -35,6 +35,9 @@ public class ConfigLoader {
         if (value == null || value.isEmpty()) {
             value = System.getenv(key);
         }
+        if (value == null || value.isEmpty()) {
+            value = System.getProperty(key);
+        }
         return (value != null && !value.isEmpty()) ? value : defaultValue;
     }
 

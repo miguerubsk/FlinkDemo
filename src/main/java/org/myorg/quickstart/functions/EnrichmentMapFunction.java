@@ -28,16 +28,20 @@ public class EnrichmentMapFunction extends RichMapFunction<String, String> {
         }
     }
 
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(EnrichmentMapFunction.class);
+
     @Override
     public String map(String value) throws Exception {
         JsonNode root = mapper.readTree(value);
         JsonNode data = root.get("after");
         if (data == null) {
+            LOG.debug("Ignored delete or null data for event: {}", value);
             return null; // Ignore deletes
         }
 
         JsonNode source = root.get("source");
         String sourceTable = source.get("table").asText();
+        LOG.info("Processing event from table: {}", sourceTable);
 
         int id = -1;
         int siniestroId = -1;
@@ -48,6 +52,8 @@ public class EnrichmentMapFunction extends RichMapFunction<String, String> {
         if (data.has("siniestro_id")) {
             siniestroId = data.get("siniestro_id").asInt();
         }
+
+        LOG.info("Event IDs - id: {}, siniestro_id: {}", id, siniestroId);
 
         return enrichmentService.processEvent(sourceTable, id, siniestroId).orElse(null);
     }

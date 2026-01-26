@@ -2,9 +2,14 @@ package org.myorg.quickstart.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.myorg.quickstart.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 
 public class EnrichmentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnrichmentService.class);
 
     private final SiniestroRepository repository;
     private final ObjectMapper objectMapper;
@@ -30,10 +35,10 @@ public class EnrichmentService {
 
                 return Optional.of(objectMapper.writeValueAsString(composite));
             } else {
-                System.out.println("WARN: Siniestro ID " + siniestroId + " not found.");
+                logger.warn("Siniestro ID {} not found.", siniestroId);
             }
         } catch (Exception e) {
-            System.err.println("ERROR: Failed to enrich Siniestro ID " + siniestroId);
+            logger.error("Failed to enrich Siniestro ID {}", siniestroId, e);
             e.getCause();
         }
         return Optional.empty();
