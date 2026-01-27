@@ -15,7 +15,7 @@ services:
     networks:
       - flink-network
 
-  # 2. Mockoon CLI (Para la API Fake)
+  # 2. Mockoon CLI (Para la API falsa)
   mockoon:
     image: mockoon/cli:latest
     container_name: mockoon_api
@@ -41,6 +41,7 @@ services:
       - MONGO_URI=${MONGO_URI}
       - MONGO_DB=${MONGO_DB}
       - MONGO_COLLECTION=${MONGO_COLLECTION}
+      - MONGO_HISTORY_COLLECTION=${MONGO_HISTORY_COLLECTION}
     networks:
       - flink-network
 
@@ -56,9 +57,11 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 200
+
       - MONGO_URI=${MONGO_URI}
       - MONGO_DB=${MONGO_DB}
       - MONGO_COLLECTION=${MONGO_COLLECTION}
+      - MONGO_HISTORY_COLLECTION=${MONGO_HISTORY_COLLECTION}
     networks:
       - flink-network
 
