@@ -54,7 +54,6 @@ public class EnrichmentMapFunction extends RichMapFunction<String, String> {
         }
 
         LOG.info("Event IDs - id: {}, siniestro_id: {}", id, siniestroId);
-
         return enrichmentService.processEvent(sourceTable, id, siniestroId).orElse(null);
     }
 }

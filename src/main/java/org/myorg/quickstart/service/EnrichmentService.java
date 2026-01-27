@@ -1,11 +1,14 @@
 package org.myorg.quickstart.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.myorg.quickstart.domain.*;
+import java.util.Optional;
+
+import org.myorg.quickstart.domain.CompositeSiniestro;
+import org.myorg.quickstart.domain.Siniestro;
+import org.myorg.quickstart.domain.SiniestroRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EnrichmentService {
 
